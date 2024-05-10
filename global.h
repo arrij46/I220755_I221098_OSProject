@@ -1,3 +1,10 @@
+#include <stdio.h>
+#include<unistd.h>
+#include <math.h>
+#include <GL/glut.h>
+#include <GL/freeglut.h>
+#include <pthread.h>
+
 #define MAZE_WIDTH 27
 #define MAZE_HEIGHT 35
 #define CELL_SIZE 1
