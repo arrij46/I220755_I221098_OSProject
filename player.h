@@ -16,7 +16,7 @@ void displayPlayer()
     glVertex2i((p.x + 1), p.y);
     glEnd();
 }
-
+//comment added
 int PlayerFoodCollision()
 {
     for (int i = 0; i < 553; i++)
