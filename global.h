@@ -1,6 +1,3 @@
-
-
-
 #define MAZE_WIDTH 27
 #define MAZE_HEIGHT 35
 #define CELL_SIZE 1
@@ -16,6 +13,19 @@ typedef struct
     float x;
     float y;
 } foodloc;
+
+
+typedef struct
+{
+    float x;
+    float y;
+    float speed;
+    int lives;
+    int score;
+    
+} Player;
+
+Player p;
 
 foodloc FC[553]; // food coordinates
 MazeCoordinate MC[311];

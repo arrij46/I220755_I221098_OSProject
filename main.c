@@ -13,36 +13,31 @@
 void keyboard(int key, int xx, int yy)
 {
     // printf("inside thread\n");
-    int tx = x, ty = y;
+    int tx = p.x, ty = p.y;
     switch (key)
     {
     case GLUT_KEY_RIGHT:
-        x += 1; // Move square right
+        tx += 1; // Move square right
         break;
     case GLUT_KEY_LEFT:
-        x -= 1; // Move square left
+        tx -= 1; // Move square left
         break;
     case GLUT_KEY_UP:
-        y += 1; // Move square up
+        ty += 1; // Move square up
         break;
     case GLUT_KEY_DOWN:
-        y -= 1; // Move square down
+        ty -= 1; // Move square down
         break;
     }
-    if (PlayerMazeCollision())
+    if (!PlayerMazeCollision(tx,ty))
     {
-        x = tx;
-        y = ty;
+        p.x = tx;
+        p.y = ty;
     }
-    // printf("player: x: %f, y: %f\n",x,y);
-    if (x < 0)
-    {
-        x = 26;
-    }
-    else if (x > 26)
-    {
-        x = 0;
-    }
+    WrapAround();
+    PlayerFoodCollision();
+    
+    
 
 
 //score'//lives //food collision // ghost collision
@@ -62,12 +57,15 @@ void drawFood()
 {
     for (int i = 0; i < 553; i++)
     {
+        if(FC[i].x != -1)
+        {
         glColor3f(1.0f, 0.65f, 0.0f); // Set color to orange for the sphere
         glPushMatrix();
         glTranslatef(FC[i].x + 0.5f, FC[i].y + 0.5f, 0.0f); // Translate to the center of the cell
         glutWireSphere(0.1f, 10, 10);                       // Draw a wireframe sphere with radius 0.4
         glPopMatrix();
         glColor3f(0.0f, 0.0f, 1.0f);
+        }
     }
 }
 void drawMaze()
@@ -103,8 +101,8 @@ void display()
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
     drawMaze();                                         // Draw the Pac-Man maze
-    displayPlayer();                                    // Draw the player
     drawFood();
+    displayPlayer();                                    // Draw the player
     glutSwapBuffers(); // Swap the buffers
 }
 
@@ -139,16 +137,17 @@ void Initialize()
             }
         }
     }
-    printf("MAZE total COORDINATES %d \n",k);
-    printf("FOOD total COORDINATES %d \n",l);
+    //printf("MAZE total COORDINATES %d \n",k);
+    //printf("FOOD total COORDINATES %d \n",l);
 }
 
 int main(int argc, char **argv)
 {
     // Initialize food and maze structures 
     Initialize();
-
-
+    p.x=2;
+    p.y=2;
+    
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
     glutInitWindowSize(950, 900);
