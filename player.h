@@ -14,16 +14,12 @@
 
 void displayPlayer()
 {
-    printf("Player Position: (%.2f, %.2f)\n", p.x, p.y);
-    glColor3f(1.0f, 1.0f, 0.0f); // Red = 1.0, Green = 1.0, Blue = 0.0
-    glBegin(GL_QUADS);
-    glVertex2i(p.x, p.y);
-    glVertex2i(p.x, (p.y + 1));
-    glVertex2i((p.x + 1), (p.y + 1));
-    glVertex2i((p.x + 1), p.y);
-    glEnd();
+        glColor3f(1.0f, 1.0f, 0.0f); // Red = 1.0, Green = 1.0, Blue = 0.0
+        glPushMatrix();
+        glTranslatef(p.x + 0.5f, p.y + 0.5f, 0.0f); // Translate to the center of the cell
+        glutSolidSphere(0.5f, 12, 12);                       // Draw a wireframe sphere with radius 0.4
+        glPopMatrix();
 }
-
 int PlayerFoodCollision()
 {
     for (int i = 0; i < 553; i++)
@@ -33,11 +29,6 @@ int PlayerFoodCollision()
             FC[i].x = -1;
             FC[i].y = -1;
             p.score++;
-            if (p.score == 10)
-            {
-                p.lives++;
-                p.score = 0;
-            }
             return 1;
         }
     }
