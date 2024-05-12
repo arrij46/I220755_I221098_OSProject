@@ -58,7 +58,7 @@ typedef struct
 } ghost;
 
 // GLOBAL VARIABLES
-
+int current_direction =0;
 Player p;
 ghost g1;        // ghost g[4];
 foodloc FC[553]; // food coordinates
