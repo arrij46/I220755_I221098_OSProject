@@ -113,7 +113,7 @@ void drawFood()
     {
         if (FC[i].x != -1)
         {
-            glColor3f(1.0f, 0.65f, 0.0f); // Set color to orange for the sphere
+            glColor3f(1.0f, 0.84f, 0.0f); // Set color to orange for the sphere
             glPushMatrix();
             glTranslatef(FC[i].x + 0.5f, FC[i].y + 0.5f, 0.0f); // Translate to the center of the cell
             glutWireSphere(0.1f, 10, 10);                       // Draw a wireframe sphere with radius 0.4
@@ -147,7 +147,7 @@ void drawFruit()
 
         if (fruit_loc[i].x != -1)
         {
-            glColor3f(2.01f, 0.0f, 0.0f);                                     // Set color to red
+            glColor3f(0.98f, 0.5f, 0.45f);                                     // Set color to red
             glPushMatrix();                                                   // Save the current matrix
             glTranslatef(fruit_loc[i].x + 0.5f, fruit_loc[i].y + 0.5f, 0.0f); // Translate to the center of the cell
             glutSolidSphere(0.4f, 10, 10);                                    // Draw a wireframe sphere with radius 0.1
