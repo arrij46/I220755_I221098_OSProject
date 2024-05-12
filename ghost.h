@@ -4,19 +4,17 @@
 #include <GL/freeglut.h>
 #include <pthread.h>
 #include "global.h"
-#include <iostream>
-#include <queue>
+#include "stack.h"
 
-using namespace std;
+//GHOST FUNCTIONS
 
-typedef struct
+void GhostInit(ghost *g)
 {
-    int x;
-    int y;
-    int speed;
-    queue<pair<int, int>> pathQ;
-
-} ghost;
+    g->x = 18;
+    g->y = 4;
+    g->speed = 0;
+    StackInit(&g->Path);
+}
 
 // Function to display the player on the screen
 void displayGhost(ghost g1)
@@ -33,11 +31,16 @@ void displayGhost(ghost g1)
 
 int valid(int x, int y)
 {
+    if (x >= 0 && x < 27 && y >= 0 && y < 32)
+        return 1;
+    else
+        return 0;
 }
 
-void Set(ghost g1)
+void SetPath(ghost *g1, int startX, int startY, int endX, int endY)
 {
     int visited[32][21];
+
     // init
     for (int i = 0; i < 32; i++)
     {
@@ -48,34 +51,99 @@ void Set(ghost g1)
                 visited[i][j] = 0;
     }
 
-    // push start
-    g1.pathQ.push(pair(g1.x, g1.y));
-    visited[g1.x][g1.y] = 1;
+    // cout << "19, 4 is wall" << !maze[4][19] << endl;
+    // cout << "19, 4 is visited" << visited[4][19] << endl;
 
-    while (!g1.pathQ.empty())
+    // temp queue
+    Stack TempQ;
+    // init
+    StackInit(&TempQ);
+
+    // push start node
+    push(&TempQ, g1->y, g1->x);
+    visited[g1->y][g1->x] = 1;
+
+    // parent array start null
+    Pair parent[32][27];
+    parent[g1->y][g1->x].x = -1;
+    parent[g1->y][g1->x].y = -1;
+
+    // up right left down
+    int dx[] = {0, +1, -1, 0};
+    int dy[] = {+1, 0, 0, -1};
+    int curry, currx, nextx, nexty;
+
+    while (!isEmpty(&TempQ))
     {
-        pair<int, int> v = g1.pathQ.front();
-        g1.pathQ.pop();
+        currx = front(&TempQ).y;//18
+        curry = front(&TempQ).x;//4
 
-        // up
-        if (valid(g1.x, g1.y - 1))
-            if (!visited[g1.x][g1.y - 1])
+        pop(&TempQ);
+        //printf("Current: (%d,%d)\n", currx, curry);
+        for (int i = 0; i < 4; i++)
+        { 
+            nextx = currx + dx[i];//18  19  17  18
+            nexty = curry + dy[i];//5   4    4   3
+
+            if (valid(nextx, nexty) && !visited[nexty][nextx])
             {
+                //printf("Valid: (%d,%d)\n", nextx, nexty);
+                push(&TempQ, nexty, nextx);
+                visited[nexty][nextx] = 1;
+                parent[nexty][nextx].x = curry;
+                parent[nexty][nextx].y = currx;
             }
-        // down
-        if (valid(g1.x + 1, g1.y))
-            if (!visited[g1.x + 1][g1.y])
-            {
-            }
-        // left
-        if (valid(g1.x, g1.y + 1))
-            if (!visited[g1.x][g1.y + 1])
-            {
-            }
-        // right
-        if (valid(g1.x - 1, g1.y))
-            if (!visited[g1.x - 1][g1.y])
-            {
-            }
+            //else printf("Invalid: (%d,%d)\n", nextx, nexty); 
+        }
+        printf("\n");
     }
+    // print parent
+    /*for(int i=0; i<32; i++)
+    {
+        for(int j=0; j<27; j++)if(parent[i][j].x!=0)
+        printf("(%d,%d)",parent[i][j].x,parent[i][j].y);
+        printf("\n");
+    }*/
+    //printf("\n");
+    currx = endY; // 1  current.first
+    curry = endX; // 25
+
+    g1->Path;
+    while (currx != -1 && curry != -1)
+    {
+        //printf("  (%d,%d)  ", curry, currx);
+        push(&g1->Path, curry, currx);
+        currx = parent[currx][curry].x;
+        curry = parent[currx][curry].y;
+    }
+
+}
+
+void MoveGhost(ghost *g1)
+{
+    // if stack is empty
+    if(isEmpty(&g1->Path))
+    {
+        int endx = 25;//rand()%24+1;
+        int endy = 1;//rand()%30+2;
+        SetPath(g1,g1->x, g1->y,endx, endy);
+    }
+    Pair temp;
+    temp.x = front(&g1->Path).x;
+    temp.y = front(&g1->Path).y;
+    pop(&g1->Path);
+    g1->x = temp.x;
+    g1->y = temp.y;
+}
+
+void CheckPath(ghost *g1)
+{
+    
+    if(isEmpty(&g1->Path))
+    {
+        int endx = rand()%24+1;
+        int endy = rand()%30+2;
+        SetPath(g1,g1->x, g1->y,endx, endy);
+    }
+
 }

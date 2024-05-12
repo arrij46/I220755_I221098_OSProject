@@ -1,13 +1,16 @@
 #include <stdio.h>
-#include<unistd.h>
+#include <unistd.h>
 #include <math.h>
 #include <GL/glut.h>
 #include <GL/freeglut.h>
 #include <pthread.h>
+#include <stack.h>
 
 #define MAZE_WIDTH 27
 #define MAZE_HEIGHT 35
 #define CELL_SIZE 1
+
+// STRUCTURE DEFINATIONS
 
 typedef struct
 {
@@ -21,7 +24,6 @@ typedef struct
     float y;
 } foodloc;
 
-
 typedef struct
 {
     float x;
@@ -29,17 +31,27 @@ typedef struct
     float speed;
     int lives;
     int score;
-    
+
 } Player;
 
-Player p;
+typedef struct
+{
+    int x;
+    int y;
+    int speed;
+    Stack Path;
+} ghost;
 
+// GLOBAL VARIABLES
+
+Player p;
+ghost g1;        // ghost g[4];
 foodloc FC[553]; // food coordinates
 MazeCoordinate MC[311];
 pthread_mutex_t mut;
 
-// Define the Pac-Man maze layout (0 for empty cell, 1 for wall)
-int maze[32][27] = // 0-> wall,  1-> empty space
+// MAZE (1 for wall)
+int maze[32][27] =
     {
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
@@ -72,5 +84,4 @@ int maze[32][27] = // 0-> wall,  1-> empty space
         {0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0},
         {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
         {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-};
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};

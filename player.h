@@ -4,10 +4,13 @@
 #include <GL/freeglut.h>
 #include <pthread.h>
 
-// Function to display the player on the screen
+
+//PLAYER FUNCTIONS
+
+
 void displayPlayer()
 {
-    // printf("Player Position: (%.2f, %.2f)\n", x, y);
+    printf("Player Position: (%.2f, %.2f)\n", p.x, p.y);
     glColor3f(1.0f, 1.0f, 0.0f); // Red = 1.0, Green = 1.0, Blue = 0.0
     glBegin(GL_QUADS);
     glVertex2i(p.x, p.y);
@@ -16,7 +19,7 @@ void displayPlayer()
     glVertex2i((p.x + 1), p.y);
     glEnd();
 }
-//comment added
+
 int PlayerFoodCollision()
 {
     for (int i = 0; i < 553; i++)
@@ -36,6 +39,7 @@ int PlayerFoodCollision()
     }
     return 0;
 }
+
 int PlayerMazeCollision(int x, int y)
 {
     for (int i = 0; i < 311; i++)

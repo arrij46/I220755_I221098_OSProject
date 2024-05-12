@@ -8,7 +8,6 @@
 #include"player.h"
 
 
-
 // Function to handle keyboard input
 void keyboard(int key, int xx, int yy)
 {
@@ -117,21 +116,21 @@ void printSomething()
 void Initialize()
 {
     int k = 0, l = 0;
-    for (int i = 0; i < 27; i++)
+    for (int c = 0; c < 27; c++)//col major
     {
         for (int j = 0; j < 32; j++)
         {
-            if (maze[j][i] == 0)
+            if (maze[j][c] == 0)
             {
                 // store the maze coordinates
-                MC[k].x = i;
+                MC[k].x = c;
                 MC[k].y = j;
                 k++;
             }
             else
             {
                 // store the food coordinates
-                FC[l].x = i;
+                FC[l].x = c;
                 FC[l].y = j;
                 l++;
             }
@@ -145,8 +144,9 @@ int main(int argc, char **argv)
 {
     // Initialize food and maze structures 
     Initialize();
-    p.x=2;
-    p.y=2;
+    p.x=18;
+
+    //ghost g1;
     
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);

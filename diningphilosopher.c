@@ -4,6 +4,7 @@
 #include <pthread.h>
 #include <semaphore.h>
 
+
 int ghost[4][2] = {{1, 0}, {2, 0}, {3, 0}, {4, 0}}; // 0 defines that ghost has not attained both key and permit
 int key[2] = {0, 0};                                // 0-> available
 int permit[2] = {0, 0};                             // 1-> taken
