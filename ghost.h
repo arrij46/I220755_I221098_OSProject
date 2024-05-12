@@ -1,10 +1,17 @@
+#ifndef GHOST_H
+#define GHOST_H
+
+
 #include <stdio.h>
 #include <math.h>
 #include <GL/glut.h>
 #include <GL/freeglut.h>
 #include <pthread.h>
-#include "global.h"
-#include "stack.h"
+
+#include"global.h"
+#include"player.h"
+#include"stack.h"
+
 
 //GHOST FUNCTIONS
 
@@ -147,3 +154,5 @@ void CheckPath(ghost *g1)
     }
 
 }
+
+#endif

@@ -1,11 +1,9 @@
+#ifndef STACK_H
+#define STACK_H
+
 #include <stdio.h>
 #include <stdlib.h>
-#define MAX_SIZE 1000
-
-typedef struct
-{
-	int x, y;
-} Pair;
+#include"global.h"
 
 void PairInit(Pair *p)
 {
@@ -13,21 +11,12 @@ void PairInit(Pair *p)
 	p->y=-1;
 }
 
-
-
-typedef struct
-{
-	Pair List[MAX_SIZE];
-	int top;
-} Stack;
-
 void StackInit(Stack *s)
 {
 	s->top = -1;
 	//doesnt matter
 	PairInit(&s->List[0]);
 }
-
 
 int isFull(Stack *s)
 {
@@ -81,3 +70,5 @@ void clear(Stack *s)
 {
 	s->top = -1; // Reset the top index to indicate an empty stack
 }
+
+#endif

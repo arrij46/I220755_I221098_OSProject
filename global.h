@@ -1,16 +1,31 @@
+#ifndef GLOBAL_H
+#define GLOBAL_H
+
 #include <stdio.h>
 #include <unistd.h>
 #include <math.h>
 #include <GL/glut.h>
 #include <GL/freeglut.h>
 #include <pthread.h>
-#include <stack.h>
+
 
 #define MAZE_WIDTH 27
 #define MAZE_HEIGHT 35
 #define CELL_SIZE 1
+#define MAX_SIZE 1000//for stack
 
 // STRUCTURE DEFINATIONS
+
+typedef struct
+{
+	int x, y;
+} Pair;
+
+typedef struct
+{
+	Pair List[MAX_SIZE];
+	int top;
+} Stack;
 
 typedef struct
 {
@@ -85,3 +100,6 @@ int maze[32][27] =
         {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
         {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+
+
+#endif

@@ -1,12 +1,16 @@
+#ifndef PLAYER_H
+#define PLAYER_H
+
 #include <stdio.h>
 #include <math.h>
 #include <GL/glut.h>
 #include <GL/freeglut.h>
 #include <pthread.h>
+#include"global.h"
+#include"ghost.h"
 
 
 //PLAYER FUNCTIONS
-
 
 void displayPlayer()
 {
@@ -63,3 +67,5 @@ void WrapAround()
         p.x = 0;
     }
 }
+
+#endif 

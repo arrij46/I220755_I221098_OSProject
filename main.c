@@ -6,6 +6,8 @@
 #include <pthread.h>
 #include"global.h"
 #include"player.h"
+#include"ghost.h"
+#include"stack.h"
 
 
 // Function to handle keyboard input
