@@ -1,47 +1,45 @@
 #include <stdio.h>
-#include<unistd.h>
+#include <unistd.h>
 #include <math.h>
 #include <GL/glut.h>
 #include <GL/freeglut.h>
 #include <pthread.h>
-#include"global.h"
-#include"player.h"
-#include"ghost.h"
-#include"stack.h"
-
+#include "global.h"
+#include "player.h"
+#include "ghost.h"
+#include "stack.h"
 
 void player_mov()
 {
     int tx = p.x, ty = p.y;
-        if (current_direction == 1) // right
-        {
-            tx++;
-        }
-        if (current_direction == 2) // left
-        {
-            tx--;
-        }
-        if (current_direction == 3) // up
-        {
-            ty++;
-        }
-        if (current_direction == 4) // down
-        {
-            ty--;
-        }
+    if (current_direction == 1) // right
+    {
+        tx++;
+    }
+    if (current_direction == 2) // left
+    {
+        tx--;
+    }
+    if (current_direction == 3) // up
+    {
+        ty++;
+    }
+    if (current_direction == 4) // down
+    {
+        ty--;
+    }
 
-        WrapAround();
+    WrapAround();
 
-        if (!PlayerMazeCollision(tx, ty))
-        {
-            p.x = tx;
-            p.y = ty;
-        }
-        PlayerFoodCollision();
-        // Redraw the scene
-        glutTimerFunc(100, player_mov, 0);
-        glutPostRedisplay();
-    
+    if (!PlayerMazeCollision(tx, ty))
+    {
+        p.x = tx;
+        p.y = ty;
+    }
+    PlayerFoodCollision();
+    // Redraw the scene
+    glutTimerFunc(100, player_mov, 0);
+    glutPostRedisplay();
 }
 // Function to handle keyboard input
 void keyboard(int key, int xx, int yy)
@@ -71,7 +69,7 @@ void keyboard(int key, int xx, int yy)
 
         break;
     }
-    //printf("key: %d\n", key);
+    // printf("key: %d\n", key);
     if (!PlayerMazeCollision(tx, ty))
     {
         p.x = tx;
@@ -82,14 +80,28 @@ void keyboard(int key, int xx, int yy)
     // score'//lives //food collision // ghost collision
     glutPostRedisplay(); // Post a redisplay to update the screen
 }
-
+void renderText(float x, float y, const char *text, char *sc)
+{
+    glColor3f(1.0f, 1.0f, 1.0f); // Set text color to white
+    glRasterPos2f(x, y);         // Set the position for rendering text
+    while (*text)
+    {
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *text); // Render each character
+        text++;                                                 // Move to the next character
+    }
+    while (*sc)
+    {
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *sc); // Render each character
+        sc++;                                                 // Move to the next character
+    }
+    // printf("score: %d", p.score);
+}
 void *inputhandling(void *arg)
 {
     while (1)
     {
         glutSpecialFunc(keyboard); // Register keyboard function
-        //renderText(-0.5f, 0.0f, GLUT_BITMAP_TIMES_ROMAN_24, "Hello, world!");
-        sleep(1); // Sleep to reduce CPU usage
+        sleep(1);                  // Sleep to reduce CPU usage
     }
 }
 // Function to draw the Pac-Man maze
@@ -97,14 +109,14 @@ void drawFood()
 {
     for (int i = 0; i < 553; i++)
     {
-        if(FC[i].x != -1)
+        if (FC[i].x != -1)
         {
-        glColor3f(1.0f, 0.65f, 0.0f); // Set color to orange for the sphere
-        glPushMatrix();
-        glTranslatef(FC[i].x + 0.5f, FC[i].y + 0.5f, 0.0f); // Translate to the center of the cell
-        glutWireSphere(0.1f, 10, 10);                       // Draw a wireframe sphere with radius 0.4
-        glPopMatrix();
-        glColor3f(0.0f, 0.0f, 1.0f);
+            glColor3f(1.0f, 0.65f, 0.0f); // Set color to orange for the sphere
+            glPushMatrix();
+            glTranslatef(FC[i].x + 0.5f, FC[i].y + 0.5f, 0.0f); // Translate to the center of the cell
+            glutWireSphere(0.1f, 10, 10);                       // Draw a wireframe sphere with radius 0.4
+            glPopMatrix();
+            glColor3f(0.0f, 0.0f, 1.0f);
         }
     }
 }
@@ -142,7 +154,13 @@ void display()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
     drawMaze();                                         // Draw the Pac-Man maze
     drawFood();
-    displayPlayer();                                    // Draw the player
+    displayPlayer(); // Draw the player
+    char scoreStr[20];
+    sprintf(scoreStr, "%d", p.score); // Convert score to string
+    renderText(2.0f, 33.0, "Score: ", scoreStr);
+        sprintf(scoreStr, "%d", p.lives); // Convert score to string
+    renderText(22.0f, 33.0, "Lives: ", scoreStr);
+
     glutSwapBuffers(); // Swap the buffers
 }
 
@@ -150,14 +168,12 @@ void printSomething()
 {
     // printf("main\n");
     glutPostRedisplay(); // Post a redisplay to update the screen
-
 }
-
 
 void Initialize()
 {
     int k = 0, l = 0;
-    for (int c = 0; c < 27; c++)//col major
+    for (int c = 0; c < 27; c++) // col major
     {
         for (int j = 0; j < 32; j++)
         {
@@ -177,34 +193,35 @@ void Initialize()
             }
         }
     }
-    //printf("MAZE total COORDINATES %d \n",k);
-    //printf("FOOD total COORDINATES %d \n",l);
+    // printf("MAZE total COORDINATES %d \n",k);
+    // printf("FOOD total COORDINATES %d \n",l);
 }
 
 int main(int argc, char **argv)
 {
-    // Initialize food and maze structures 
+    // Initialize food and maze structures
     Initialize();
-  p.x = 13;
+    p.x = 13;
     p.y = 7;
-    //ghost g1;
-    
+    p.lives=3;
+    // ghost g1;
+
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
     glutInitWindowSize(950, 900);
     glutCreateWindow("Pac-Man Maze");
 
     initOpenGL();
-    
+
     // Create threads for input handling and ghost behavior
     pthread_t playerInputThread, ghostThread;
     pthread_create(&playerInputThread, NULL, inputhandling, NULL);
     glutPostRedisplay(); // Post a redisplay to update the screen
-    //pthread_create(&ghostThread, NULL, check, NULL);
+    // pthread_create(&ghostThread, NULL, check, NULL);
     glutPostRedisplay(); // Post a redisplay to update the screen
     glutDisplayFunc(display);
-        glutTimerFunc(100, player_mov, 0);
-    //glutIdleFunc(printSomething);
+    glutTimerFunc(100, player_mov, 0);
+    // glutIdleFunc(printSomething);
 
     glutMainLoop();
 
