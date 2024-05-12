@@ -203,7 +203,7 @@ int main(int argc, char **argv)
     Initialize();
     p.x = 13;
     p.y = 7;
-    p.lives=3;
+    p.lives=3; //updated
     // ghost g1;
 
     glutInit(&argc, argv);
