@@ -113,3 +113,38 @@ int maze[32][27] =
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
 
 #endif
+
+
+// color for ghost pellets
+//(0.98f, 0.5f, 0.45f)
+/*
+    Black: (0.0f, 0.0f, 0.0f)
+    White: (1.0f, 1.0f, 1.0f)
+    Red: (1.0f, 0.0f, 0.0f)
+    Green: (0.0f, 1.0f, 0.0f)
+    Blue: (0.0f, 0.0f, 1.0f)
+    Yellow: (1.0f, 1.0f, 0.0f)
+    Cyan: (0.0f, 1.0f, 1.0f)
+    Magenta: (1.0f, 0.0f, 1.0f)
+    Gray: You can create various shades of gray
+    Orange: (1.0f, 0.5f, 0.0f)
+    Pink: (1.0f, 0.75f, 0.8f)
+    Purple: (0.5f, 0.0f, 0.5f)
+    Lime Green: (0.75f, 1.0f, 0.0f)
+    Teal: (0.0f, 0.5f, 0.5f)
+    Sky Blue: (0.53f, 0.81f, 0.98f)
+    Salmon: (0.98f, 0.5f, 0.45f)
+    Lavender: (0.71f, 0.49f, 0.86f)
+    Turquoise: (0.25f, 0.88f, 0.82f)
+    Gold: (1.0f, 0.84f, 0.0f)
+    Silver: (0.75f, 0.75f, 0.75f)
+    Brown: (0.65f, 0.16f, 0.16f)
+    Beige: (0.96f, 0.96f, 0.86f)
+    Navy Blue: (0.0f, 0.0f, 0.5f)
+    Maroon: (0.5f, 0.0f, 0.0f)
+    Olive: (0.5f, 0.5f, 0.0f)
+    Indigo: (0.29f, 0.0f, 0.51f)
+    Slate Gray: (0.44f, 0.5f, 0.56f)
+    Hot Pink: (1.0f, 0.41f, 0.71f)
+    Chartreuse: (0.5f, 1.0f, 0.0f)
+*/
