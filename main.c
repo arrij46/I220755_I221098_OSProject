@@ -166,8 +166,7 @@ void display()
 
 void printSomething()
 {
-    // printf("main\n");
-    glutPostRedisplay(); // Post a redisplay to update the screen
+    //glutPostRedisplay(); // Post a redisplay to update the screen
 }
 
 void Initialize()
@@ -193,8 +192,6 @@ void Initialize()
             }
         }
     }
-    // printf("MAZE total COORDINATES %d \n",k);
-    // printf("FOOD total COORDINATES %d \n",l);
 }
 
 int main(int argc, char **argv)
