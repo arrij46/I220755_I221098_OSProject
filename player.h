@@ -34,7 +34,22 @@ int PlayerFoodCollision()
     }
     return 0;
 }
-
+int PlayerFruitCollision()
+{
+    for (int i = 0; i < 4; i++)
+    {
+        if (fruit_loc[i].x == p.x && fruit_loc[i].y == p.y)
+        {
+            fruit_loc[i].x = -1;
+            fruit_loc[i].y = -1;
+            fruit_loc[i].check=1;
+            p.score+=5;
+            return 1;
+        }
+    
+    }
+    return 0;
+}
 int PlayerMazeCollision(int x, int y)
 {
     for (int i = 0; i < 311; i++)
