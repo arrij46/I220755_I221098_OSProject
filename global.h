@@ -8,23 +8,22 @@
 #include <GL/freeglut.h>
 #include <pthread.h>
 
-
 #define MAZE_WIDTH 27
 #define MAZE_HEIGHT 35
 #define CELL_SIZE 1
-#define MAX_SIZE 1000//for stack
+#define MAX_SIZE 1000 // for stack
 
 // STRUCTURE DEFINATIONS
 
 typedef struct
 {
-	int x, y;
+    int x, y;
 } Pair;
 
 typedef struct
 {
-	Pair List[MAX_SIZE];
-	int top;
+    Pair List[MAX_SIZE];
+    int top;
 } Stack;
 
 typedef struct
@@ -38,6 +37,13 @@ typedef struct
     float x;
     float y;
 } foodloc;
+
+typedef struct
+{
+    float x;
+    float y;
+    int check;
+} fruit;
 
 typedef struct
 {
@@ -58,12 +64,17 @@ typedef struct
 } ghost;
 
 // GLOBAL VARIABLES
-int current_direction =0;
+int current_direction = 0;
 Player p;
 ghost g1;        // ghost g[4];
 foodloc FC[553]; // food coordinates
 MazeCoordinate MC[311];
 pthread_mutex_t mut;
+fruit fruit_loc[4]={{3,8,0},{23,8,0},{5,25,0},{21,25,0}};
+
+
+
+
 
 // MAZE (1 for wall)
 int maze[32][27] =
@@ -100,6 +111,5 @@ int maze[32][27] =
         {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
         {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
-
 
 #endif
