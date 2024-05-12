@@ -10,6 +10,39 @@
 #include"stack.h"
 
 
+void player_mov()
+{
+    int tx = p.x, ty = p.y;
+        if (current_direction == 1) // right
+        {
+            tx++;
+        }
+        if (current_direction == 2) // left
+        {
+            tx--;
+        }
+        if (current_direction == 3) // up
+        {
+            ty++;
+        }
+        if (current_direction == 4) // down
+        {
+            ty--;
+        }
+
+        WrapAround();
+
+        if (!PlayerMazeCollision(tx, ty))
+        {
+            p.x = tx;
+            p.y = ty;
+        }
+        PlayerFoodCollision();
+        // Redraw the scene
+        glutTimerFunc(100, player_mov, 0);
+        glutPostRedisplay();
+    
+}
 // Function to handle keyboard input
 void keyboard(int key, int xx, int yy)
 {
@@ -19,29 +52,34 @@ void keyboard(int key, int xx, int yy)
     {
     case GLUT_KEY_RIGHT:
         tx += 1; // Move square right
+        current_direction = 1;
+
         break;
     case GLUT_KEY_LEFT:
         tx -= 1; // Move square left
+        current_direction = 2;
+
         break;
     case GLUT_KEY_UP:
         ty += 1; // Move square up
+        current_direction = 3;
+
         break;
     case GLUT_KEY_DOWN:
         ty -= 1; // Move square down
+        current_direction = 4;
+
         break;
     }
-    if (!PlayerMazeCollision(tx,ty))
+    //printf("key: %d\n", key);
+    if (!PlayerMazeCollision(tx, ty))
     {
         p.x = tx;
         p.y = ty;
     }
     WrapAround();
     PlayerFoodCollision();
-    
-    
-
-
-//score'//lives //food collision // ghost collision
+    // score'//lives //food collision // ghost collision
     glutPostRedisplay(); // Post a redisplay to update the screen
 }
 
@@ -50,6 +88,7 @@ void *inputhandling(void *arg)
     while (1)
     {
         glutSpecialFunc(keyboard); // Register keyboard function
+        //renderText(-0.5f, 0.0f, GLUT_BITMAP_TIMES_ROMAN_24, "Hello, world!");
         sleep(1); // Sleep to reduce CPU usage
     }
 }
@@ -146,8 +185,8 @@ int main(int argc, char **argv)
 {
     // Initialize food and maze structures 
     Initialize();
-    p.x=18;
-
+  p.x = 13;
+    p.y = 7;
     //ghost g1;
     
     glutInit(&argc, argv);
@@ -162,8 +201,9 @@ int main(int argc, char **argv)
     pthread_create(&playerInputThread, NULL, inputhandling, NULL);
     glutPostRedisplay(); // Post a redisplay to update the screen
     //pthread_create(&ghostThread, NULL, check, NULL);
-
+    glutPostRedisplay(); // Post a redisplay to update the screen
     glutDisplayFunc(display);
+        glutTimerFunc(100, player_mov, 0);
     //glutIdleFunc(printSomething);
 
     glutMainLoop();
