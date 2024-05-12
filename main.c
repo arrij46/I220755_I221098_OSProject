@@ -37,6 +37,7 @@ void player_mov()
         p.y = ty;
     }
     PlayerFoodCollision();
+    PlayerFruitCollision();
     // Redraw the scene
     glutTimerFunc(100, player_mov, 0);
     glutPostRedisplay();
@@ -77,6 +78,7 @@ void keyboard(int key, int xx, int yy)
     }
     WrapAround();
     PlayerFoodCollision();
+    PlayerFruitCollision();
     // score'//lives //food collision // ghost collision
     glutPostRedisplay(); // Post a redisplay to update the screen
 }
@@ -137,6 +139,23 @@ void drawMaze()
 }
 
 // Function to initialize OpenGL settings
+
+void drawFruit()
+{
+    for (int i = 0; i < 4; i++)
+    {
+
+        if (fruit_loc[i].x != -1)
+        {
+            glColor3f(2.01f, 0.0f, 0.0f);                                     // Set color to red
+            glPushMatrix();                                                   // Save the current matrix
+            glTranslatef(fruit_loc[i].x + 0.5f, fruit_loc[i].y + 0.5f, 0.0f); // Translate to the center of the cell
+            glutSolidSphere(0.4f, 10, 10);                                    // Draw a wireframe sphere with radius 0.1
+            glPopMatrix();                                                    // Restore the previous matrix
+            glColor3f(0.0f, 0.0f, 1.0f);
+        }
+    }
+}
 void initOpenGL()
 {
     glEnable(GL_DEPTH_TEST);              // Enable depth testing
@@ -146,7 +165,6 @@ void initOpenGL()
     gluOrtho2D(0, MAZE_WIDTH * CELL_SIZE, 0, MAZE_HEIGHT * CELL_SIZE); // Set up a 2D orthographic projection
     glMatrixMode(GL_MODELVIEW);
 }
-
 // Function to display the maze and player on the screen
 void display()
 {
@@ -154,11 +172,17 @@ void display()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
     drawMaze();                                         // Draw the Pac-Man maze
     drawFood();
+
+    //to prevent unnecessaty function calls
+    if (fruit_loc[0].check != 1 || fruit_loc[1].check != 1 || fruit_loc[2].check != 1 || fruit_loc[3].check != 1)
+        drawFruit();
+
+
     displayPlayer(); // Draw the player
     char scoreStr[20];
     sprintf(scoreStr, "%d", p.score); // Convert score to string
     renderText(2.0f, 33.0, "Score: ", scoreStr);
-        sprintf(scoreStr, "%d", p.lives); // Convert score to string
+    sprintf(scoreStr, "%d", p.lives); // Convert score to string
     renderText(22.0f, 33.0, "Lives: ", scoreStr);
 
     glutSwapBuffers(); // Swap the buffers
@@ -166,7 +190,7 @@ void display()
 
 void printSomething()
 {
-    //glutPostRedisplay(); // Post a redisplay to update the screen
+    // glutPostRedisplay(); // Post a redisplay to update the screen
 }
 
 void Initialize()
@@ -188,6 +212,13 @@ void Initialize()
                 // store the food coordinates
                 FC[l].x = c;
                 FC[l].y = j;
+                // to make sure there is no food in place of a fruit
+
+                if ((FC[l].x == 3 && FC[l].y == 8) || (FC[l].x == 23 && FC[l].y == 8) || (FC[l].x == 5 && FC[l].y == 25) || (FC[l].x == 21 && FC[l].y == 25))
+                {
+                    FC[l].x = -1;
+                    FC[l].y = -1;
+                }
                 l++;
             }
         }
@@ -200,7 +231,7 @@ int main(int argc, char **argv)
     Initialize();
     p.x = 13;
     p.y = 7;
-    p.lives=3; //updated
+    p.lives = 3; // updated
     // ghost g1;
 
     glutInit(&argc, argv);
