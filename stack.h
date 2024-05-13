@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include"global.h"
 
-void PairInit(Pair *p)
+void PairInit(Coordinate *p)
 {
 	p->x=-1;
 	p->y=-1;
@@ -14,8 +14,6 @@ void PairInit(Pair *p)
 void StackInit(Stack *s)
 {
 	s->top = -1;
-	//doesnt matter
-	PairInit(&s->List[0]);
 }
 
 int isFull(Stack *s)
@@ -56,7 +54,7 @@ void pop(Stack *s)
 	s->top--;
 }
 
-Pair front(Stack *s)
+Coordinate front(Stack *s)
 {
 	if (isEmpty(s))
 	{
