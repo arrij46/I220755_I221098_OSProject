@@ -147,7 +147,7 @@ void drawFruit()
 
         if (fruit_loc[i].x != -1)
         {
-            glColor3f(0.98f, 0.5f, 0.45f);                                     // Set color to red
+            glColor3f(0.5f, 0.0f, 0.0f);                                     // Set color to maroon
             glPushMatrix();                                                   // Save the current matrix
             glTranslatef(fruit_loc[i].x + 0.5f, fruit_loc[i].y + 0.5f, 0.0f); // Translate to the center of the cell
             glutSolidSphere(0.4f, 10, 10);                                    // Draw a wireframe sphere with radius 0.1
