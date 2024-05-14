@@ -80,6 +80,7 @@ int main(int argc, char **argv)
 
 void player_mov()
 {
+    sleep(0.05);
     int tx = p.x, ty = p.y;
     if (current_direction == 1) // right
     {
@@ -110,7 +111,8 @@ void player_mov()
     PlayerFoodCollision();
     PlayerGhostPelletCollision();
     PlayerFruitCollision();
-    glutTimerFunc(1000, player_mov, 0);
+    PlayerGhostCollision();
+    glutTimerFunc(100, player_mov, 0);
 }
 // Function to handle keyboard input
 void keyboard(int key, int xx, int yy)

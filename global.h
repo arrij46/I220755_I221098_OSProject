@@ -245,7 +245,7 @@ void drawPellet()
             glColor3f(0.71f, 0.49f, 0.86f);                             // Set color to red
             glPushMatrix();                                             // Save the current matrix
             glTranslatef(Pellet[i].x + 0.5f, Pellet[i].y + 0.5f, 0.0f); // Translate to the center of the cell
-            glutSolidSphere(0.4f, 10, 10);                              // Draw a wireframe sphere with radius 0.1
+            glutSolidSphere(0.3f, 20, 20);                              // Draw a wireframe sphere with radius 0.1
             glPopMatrix();                                              // Restore the previous matrix
             glColor3f(0.71f, 0.49f, 0.86f);
         }
