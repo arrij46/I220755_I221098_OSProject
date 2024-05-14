@@ -21,11 +21,11 @@ void initPlayer(Player *p)
 void displayPlayer()
 {
     // printf("Player Position: (%.2f, %.2f)\n", p.x, p.y);
-            glColor3f(1.0f, 1.0f, 0.0f); // Red = 1.0, Green = 1.0, Blue = 0.0
-        glPushMatrix();
-        glTranslatef(p.x + 0.5f, p.y + 0.5f, 0.0f); // Translate to the center of the cell
-        glutSolidSphere(0.5f, 12, 12);                       // Draw a wireframe sphere with radius 0.4
-        glPopMatrix();
+    glColor3f(1.0f, 1.0f, 0.0f); // Red = 1.0, Green = 1.0, Blue = 0.0
+    glPushMatrix();
+    glTranslatef(p.x + 0.5f, p.y + 0.5f, 0.0f); // Translate to the center of the cell
+    glutSolidSphere(0.5f, 12, 12);              // Draw a wireframe sphere with radius 0.4
+    glPopMatrix();
 }
 int PlayerFoodCollision()
 {
@@ -71,17 +71,17 @@ int PlayerGhostPelletCollision()
 {
     for (int i = 0; i < 2; i++)
     {
-        if (Pellet[i].x == p.x && Pellet[i].y == p.y)
-        {
-            Pellet[i].x = -1;
-            Pellet[i].y = -1;
-            for (int i = 0; i < 4; i++)
+        if (Pellet[0].check == 1 && Pellet[1].check == 1)//if both are present 
+            if (Pellet[i].x == p.x && Pellet[i].y == p.y)
             {
-                g[i].isfreeze = 1;
+                Pellet[i].check = 0; // not on screen
+                for (int i = 0; i < 4; i++)
+                {
+                    g[i].isfreeze = 1;
+                }
+                printf("Pellet colllected\n");
+                return 1;
             }
-            printf("Pellet colllected\n");
-            return 1;
-        }
     }
     return 0;
 }
@@ -92,8 +92,9 @@ void PlayerGhostCollision()
     {
         if (g[i].x == p.x && g[i].y == p.y && !g[i].isfreeze)
         {
+            
             p.lives--;
-            //printf("Player lives %d",p.lives);
+            // printf("Player lives %d",p.lives);
             p.x = 1;
             p.y = 1;
             if (p.lives == 0)
@@ -102,6 +103,7 @@ void PlayerGhostCollision()
                 exit(0);
             }
         }
+
     }
 }
 

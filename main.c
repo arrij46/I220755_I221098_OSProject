@@ -39,12 +39,17 @@ int main(int argc, char **argv)
     sem_init(&key, 0, 2);
     sem_init(&permit, 0, 2);
 
+    pthread_mutex_init(&ProducerConsumerMutex, NULL); // locked
+    sem_init(&CigaretteSmoker,0,1);
+
+    
     // lock the sema
     sem_wait(&writing); // no one can write
     sem_wait(&s1);
 
     // Initialize timeRemaining
     timeRemaining = powerUpDuration;
+    SpeedBoostRemaining = SpeedBoostDuration;
 
     // Start the timer
     glutTimerFunc(1000, timer, 0); // Initial call after 1 second
@@ -74,6 +79,7 @@ int main(int argc, char **argv)
     glutDisplayFunc(display);
 
     glutMainLoop();
+    // glutDestroyMenu();
 
     return 0;
 }
@@ -109,15 +115,20 @@ void player_mov()
         sem_post(&writing);
     }
     PlayerFoodCollision();
+
+    pthread_mutex_lock(&ProducerConsumerMutex);
     PlayerGhostPelletCollision();
+    pthread_mutex_unlock(&ProducerConsumerMutex);
+
     PlayerFruitCollision();
     PlayerGhostCollision();
-    glutTimerFunc(100, player_mov, 0);
+    glutTimerFunc(5000, player_mov, 0);
+
 }
 // Function to handle keyboard input
 void keyboard(int key, int xx, int yy)
 {
-    // printf("User Interface thread\n");
+    //printf("User Interface thread\n");
     int tx = p.x, ty = p.y;
     switch (key)
     {
@@ -152,19 +163,27 @@ void keyboard(int key, int xx, int yy)
     }
     // printf("key: %d\n", key);
     if (!PlayerMazeCollision(tx, ty))
-    // printf("key: %d\n", key);
-    if (!PlayerMazeCollision(tx, ty))
-    {
-        sem_wait(&writing);
-        p.x = tx;
-        p.y = ty;
-        sem_post(&writing);
-    }
+        // printf("key: %d\n", key);
+        if (!PlayerMazeCollision(tx, ty))
+        {
+            sem_wait(&writing);
+            p.x = tx;
+            p.y = ty;
+            sem_post(&writing);
+        }
     WrapAround();
+    pthread_mutex_lock(&ProducerConsumerMutex);
+    //consumer
     PlayerGhostPelletCollision();
+    PlayerGhostCollision();
+    pthread_mutex_unlock(&ProducerConsumerMutex);
     PlayerFoodCollision();
+
     PlayerFruitCollision();
-    player_mov();
+    for(int i=0; i<4; i++)
+    if (g[i].isfreeze)
+        PlayerEatsGhost(&g[i]);
+    //player_mov();
     // score'//lives //food collision // ghost collision
 }
 void *inputhandling(void *arg)
@@ -178,9 +197,7 @@ void *inputhandling(void *arg)
 }
 void *GhostFunction(void *arg)
 {
-
     ghost *g1 = (ghost *)arg;
-
     // printf("ghost thread runningg\n");
     while (1)
     {
@@ -206,9 +223,19 @@ void display()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
 
     drawMaze(); // Draw the Pac-Man maze
+
     drawFood();
+    drawSpeedBoost();
+
+    // Producer
+    pthread_mutex_lock(&ProducerConsumerMutex);
+
+    
     drawPellet();
     drawGhost();
+    pthread_mutex_unlock(&ProducerConsumerMutex);
+
+    //drawGhost();
 
     // to prevent unnecessaty function calls
     if (fruit_loc[0].check != 1 || fruit_loc[1].check != 1 || fruit_loc[2].check != 1 || fruit_loc[3].check != 1)
@@ -223,6 +250,3 @@ void display()
     glutSwapBuffers();                            // Swap the buffers
     glutPostRedisplay();
 }
-
-
-

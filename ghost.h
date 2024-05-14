@@ -21,12 +21,13 @@ void GhostInit(ghost g[4])
         g[i].id = i;
         g[i].status = 0;
         g[i].isfreeze = 0;
+        g[i].speed = 0;
     }
     g[0].x = 11;
     g[1].x = 12;
     g[2].x = 14;
     g[3].x = 15;
-    SetPath(&g[0], g[0].x, g[0].y, 1, 1);
+    SetPath(&g[0], g[0].x, g[0].y, 1, 30);
     SetPath(&g[1], g[1].x, g[1].y, 25, 30);
     SetPath(&g[2], g[2].x, g[2].y, 25, 1);
     SetPath(&g[3], g[3].x, g[3].y, 1, 30);
@@ -57,13 +58,13 @@ void drawGhost()
         displayGhost(&g[0], 1.0f, 0.41f, 0.71f); // hot pink
         displayGhost(&g[1], 0.5f, 0.0f, 0.0f);   // maroon 
         displayGhost(&g[2], 0.0f, 1.0f, 1.0f); // cyan:
-        displayGhost(&g[3], 0.75f, 1.0f, 0.0f);   // lime green
+        displayGhost(&g[3], 1.0f, 0.5f, 0.0f);   // lime green
     }
 }
 
 int valid(int x, int y)
 {
-    if (x >= 0 && x < 27 && y >= 0 && y < 32)
+    if (x > 0 && x < 27 && y >  0 && y < 32)
         return 1;
     else
         return 0;
@@ -176,12 +177,26 @@ void PlayerEatsGhost(ghost *g1)
 {
     if ((p.x == g1->x && p.y == g1->y))
     {
-        printf("Ghost %d ate you\n", g1->id);
+        printf("You %d ate Ghost \n", g1->id);
         g1->status = 0;
         g1->x = 11 + g1->id; // sets to start position
         g1->y = 16;
         g1->Path.top = -1;
+        p.score+=20;
         release_objects(g1->id);
+
+    }
+}
+
+void GhostSpeedBoostCollision()
+{
+    for(int i=0; i<2; i++)
+    if(SpeedBoost[i].x==g[0].x && SpeedBoost[i].y==g[0].y && g[0].speed==0)
+    {
+        SpeedBoost[i].x=-1;
+        SpeedBoost[i].y=-1;
+        g[0].speed=1;
+        sem_wait(&CigaretteSmoker);
     }
 }
 
@@ -192,7 +207,6 @@ int MoveGhost(ghost *g1)
     {
         sem_wait(&setting);
         CreatePath(g1);
-        sleep(1);
         sem_post(&setting);
     }
 
@@ -208,7 +222,16 @@ int MoveGhost(ghost *g1)
     pop(&g1->Path);
     if (g1->isfreeze)
         PlayerEatsGhost(g1);
+    
+    GhostSpeedBoostCollision();    
+    
+    if(g[0].speed==1 && g[0].Path.top >1)
+    pop(&g[0].Path);
+    
+    else
     sleep(1);
+
+    //glutPostRedisplay();
     return g1->status;
 }
 

@@ -42,11 +42,11 @@ typedef struct
 {
     float x;
     float y;
-    int speed;
     Stack Path;
     int id;
     int status;   // to keep track if the ghost can leave the house or not
     int isfreeze; // to check if ghost can be eaten by the player
+    int speed;
 } ghost;
 
 typedef struct
@@ -56,7 +56,8 @@ typedef struct
     int check;
 } fruit;
 
-Coordinate Pellet[2] = {{2, 7}, {23, 19}};
+fruit Pellet[2] = {{2, 7, 1}, {23, 19, 1}};
+fruit SpeedBoost[2] = {{1, 1, 1}, {14, 3, 1}};
 
 // GLOBAL VARIABLES
 
@@ -69,6 +70,10 @@ Coordinate FC[555]; // food coordinates
 Coordinate MC[309];
 pthread_mutex_t mut;
 
+pthread_mutex_t ProducerConsumerMutex;
+
+sem_t CigaretteSmoker;
+
 fruit fruit_loc[4] = {{3, 8, 0}, {23, 8, 0}, {5, 25, 0}, {21, 25, 0}};
 
 //  sema
@@ -79,6 +84,9 @@ sem_t key, permit;
 
 int powerUpDuration = 20; // Duration of power-up in seconds
 int timeRemaining;
+
+int SpeedBoostDuration = 20; // Duration of power-up in seconds
+int SpeedBoostRemaining;
 
 // MAZE (1 for wall)
 int maze[32][27] =
@@ -168,6 +176,7 @@ void drawFood()
     }
 }
 
+/*
 void drawMaze()
 {
     glColor3f(0.0f, 0.0f, 1.0f); // Set color to blue
@@ -183,9 +192,9 @@ void drawMaze()
         glEnd();
     }
 }
-
+*/
 // different color maze
-/*void drawMaze()
+void drawMaze()
 {
     // Set color to gray for the inner area
     glColor3f(0.0f, 0.0f, 0.15f);
@@ -216,7 +225,7 @@ void drawMaze()
         glEnd();
     }
 }
-*/
+
 void drawFruit()
 {
     for (int i = 0; i < 4; i++)
@@ -224,30 +233,47 @@ void drawFruit()
 
         if (fruit_loc[i].x != -1)
         {
-            glColor3f(0.98f, 0.5f, 0.45f);                                    // Set color to red
+            glColor3f(1.0f, 0.0f, 0.0f);                                      // Set color to red
             glPushMatrix();                                                   // Save the current matrix
             glTranslatef(fruit_loc[i].x + 0.5f, fruit_loc[i].y + 0.5f, 0.0f); // Translate to the center of the cell
-            glutSolidSphere(0.4f, 10, 10);                                    // Draw a wireframe sphere with radius 0.1
+            glutSolidCone(0.4f, 10, 5, 5);                                    // Draw a wireframe sphere with radius 0.1
             glPopMatrix();                                                    // Restore the previous matrix
             glColor3f(0.0f, 0.0f, 1.0f);
         }
     }
 }
 
+void drawSpeedBoost()
+{
+    for (int i = 0; i < 2; i++)
+    {
 
+        if (SpeedBoost[i].check)
+        {
+            glColor3f(0.75f, 1.0f, 0.0f);                                       // Set color to red
+            glPushMatrix();                                                     // Save the current matrix
+            glTranslatef(SpeedBoost[i].x + 0.5f, SpeedBoost[i].y + 0.5f, 0.0f); // Translate to the center of the cell
+            glutWireSphere(0.4f, 10, 10);                                       // Draw a wireframe sphere with radius 0.1
+            glPopMatrix();                                                      // Restore the previous matrix
+            glColor3f(0.0f, 0.0f, 1.0f);
+        }
+    }
+}
 
 void drawPellet()
 {
     for (int i = 0; i < 2; i++)
     {
-        if (Pellet[i].x != -1)
+        if (Pellet[i].check) // if on screen
         {
             glColor3f(0.71f, 0.49f, 0.86f);                             // Set color to red
             glPushMatrix();                                             // Save the current matrix
             glTranslatef(Pellet[i].x + 0.5f, Pellet[i].y + 0.5f, 0.0f); // Translate to the center of the cell
-            glutSolidSphere(0.3f, 20, 20);                              // Draw a wireframe sphere with radius 0.1
-            glPopMatrix();                                              // Restore the previous matrix
+                                                                        // glutSolidSphere(0.3f, 20, 20);                              // Draw a wireframe sphere with radius 0.1
+            glutSolidTorus(0.1f, 0.3f, 12, 12);
+            glPopMatrix(); // Restore the previous matrix
             glColor3f(0.71f, 0.49f, 0.86f);
+            // Draw a solid torus with inner radius 0.2 and outer radius 0.5
         }
     }
 }
@@ -285,7 +311,7 @@ void timer()
 {
     if (g[0].isfreeze)
     {
-        // Decrement time remaining
+
         timeRemaining--;
         // printf("Time dec....\n");
 
@@ -293,8 +319,29 @@ void timer()
         {
             // Power-up duration expired
             for (int i = 0; i < 4; i++)
-                g[i].isfreeze = 0;
+                g[i].isfreeze = 0; // defrost the ghost
+
             timeRemaining = powerUpDuration; // Reset time remaining
+
+            pthread_mutex_lock(&ProducerConsumerMutex);
+            if (!Pellet[0].check)
+            {
+                Pellet[0].check = 1; // back on scrren
+            }
+            else
+                Pellet[1].check = 1; // back on scrren
+
+            pthread_mutex_unlock(&ProducerConsumerMutex);
+        }
+    }
+    if (g[0].speed == 1)
+    {
+        SpeedBoostRemaining--;
+        if (SpeedBoostRemaining <= 0)
+        {
+            g[0].speed = 0;
+            SpeedBoostRemaining = SpeedBoostDuration;
+            sem_post(&CigaretteSmoker);
         }
     }
     // function calls itself every 1s
@@ -335,7 +382,6 @@ void timer()
     Chartreuse: (0.5f, 1.0f, 0.0f)
 */
 #endif
-
 
 // color for ghost pellets
 //(0.98f, 0.5f, 0.45f)
